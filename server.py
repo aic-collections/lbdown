@@ -113,7 +113,7 @@ def generate(uids, original_filename=False):
         role_uris = []
         for uid_el in uid_els[1:]:
             role_uris.append(role_uri_pfx + fset_types[uid_el])
-        for src in retrieve_contents(asset_uid, role_uris):
+        for src in retrieve_contents(asset_uid, role_uris, original_filename):
             app.logger.info('Asset UID: {}'.format(asset_uid))
             app.logger.info('Fileset roles: {}'.format(role_uris))
             zstream.write_iter(**src)
@@ -148,7 +148,10 @@ def retrieve_contents(asset_uid, role_uris=[], original_filename=False):
 
         fname = (
                 orig_fname if original_filename
-                else fset_pfx[path.basename(fstype)])
+                else '{}-{}{}'.format(
+                    asset_uid,
+                    fset_pfx[path.basename(fstype)],
+                    path.splitext(orig_fname)[1]))
 
         yield {
             'arcname': '{}/{}'.format(asset_uid, fname),
