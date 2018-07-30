@@ -128,5 +128,5 @@ def retrieve_contents(asset_uid, role_uris=[]):
         yield {
             'orig_fname': doc['fname']['value'],
             'fstype': fset_pfx[path.basename(doc['fstype']['value'])],
-            'iterable': file_rsp.iter_content(chunk_size=4096),
+            'iterable': file_rsp.iter_content(chunk_size=CHUNK_SIZE ),
         }
