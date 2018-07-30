@@ -76,38 +76,6 @@ def generate(uids, ziproot, original_filename=False):
     it out in chunks.
 
     :param list uids: List of LAKE asset UIDs to retrieve.
-        Optionally, filesets with one or more specific roles can be indicated.
-        E.g.::
-
-            ['uuid1' , 'uuid2', 'uuid3:pm', 'uuid3:orig',
-            'uuid4:int', 'uuid5:int:pm']
-
-        Will package and download all files for ``uuid1``, ``uuid2``, the
-        original file for ``uuid3``, the intermediate for ``uuid4`` and both
-        intermediate and preservation master for ``uuid5``.
-
-        The final ZIP folder structure will look similar to the following::
-
-            <ZIP root>
-             │
-             ├─uuid1
-             │  ├─uuid1-int.tiff
-             │  ├─uuid1-pm.tiff
-             │  └─uuid1-orig.dng
-             ├─uuid2
-             │  ├─uuid2-int.tiff
-             │  ├─uuid2-pm.tiff
-             │  └─uuid2-orig.dng
-             ├─uuid3
-             │  └─uuid3-orig.tiff
-             ├─uuid4
-             │  └─uuid4-int.tiff
-             └─uuid5
-                ├─uuid5-int.tiff
-                └─uuid5-pm.tiff
-
-    If ``original_filename`` is set to ``True``, the files are named as they
-    were originally uploaded.
     """
     zstream = zipstream.ZipFile(mode='w')
 
@@ -119,8 +87,7 @@ def generate(uids, ziproot, original_filename=False):
         for uid_el in uid_els[1:]:
             role_uris.append(role_uri_pfx + fset_types[uid_el])
         for doc in retrieve_contents(asset_uid, role_uris):
-            app.logger.info('Asset UID: {}'.format(asset_uid))
-            app.logger.info('Fileset roles: {}'.format(role_uris))
+            app.logger.info('Requesting asset UID: {}'.format(asset_uid))
 
             fname = (
                     doc['orig_fname'] if original_filename
@@ -147,8 +114,8 @@ def retrieve_contents(asset_uid, role_uris=[]):
         data={'query': qry},
         headers={'Accept': 'application/json'}
     )
-    app.logger.info('Query: {}'.format(qry))
-    app.logger.info('Response: {}'.format(rsp.text))
+    app.logger.debug('Query: {}'.format(qry))
+    app.logger.debug('Response: {}'.format(rsp.text))
 
     docs = rsp.json()['results']['bindings']
     #app.logger.debug('Retrieved docs: {}'.format(docs))
