@@ -29,9 +29,17 @@ module from the Python standard library is the most convenient tool.
     source virtualenv/bin/activate
     git clone https://github.com/aic-collections/lbdown.git src
     cd src
+    # Install dependencies.
     pip install -r requirements.txt
+
+    # Set up application.
+    cp -r etc.example /tmp/my_config
+    #### Edit application.yml config file ####
+
+    export LBDOWN_CONFIG_DIR=/tmp/my_config
     export FLASK_APP=server.py
-    export FLASK_DEBUG=1 # optional
+
+    # Run the server
     flask run
 
 The server will run on port 5000.
@@ -42,7 +50,7 @@ Usage
 
 ::
 
-    curl -XPOST localhost:5000/batch_download -F'uids=SI-016904' -F'original_filename=true' -o /tmp/lake_dl.zip
+    curl -XPOST localhost:5000/batch_download -F'uids=SI-016904,SI-016936' -F'original_filename=true' -o /tmp/lake_dl.zip
 
 The archive file will start downloading very shortly (startup time is
 proportional to the number of resources requested, not to the size of the

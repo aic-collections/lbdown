@@ -8,18 +8,14 @@ import zipstream
 
 from flask import Flask, Response, request
 
-CHUNK_SIZE = 4096
-"""Bytes streamed at a time."""
+from lbdown.config import flask as flask_conf
+from lbdown.config import application as app_conf
 
-ZIPROOT_PFX = 'lake_batch_download'
-"""Beginning of the ZIP archive root name. It is suffixed with a timestamp."""
 
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-#app.config.update(flask_conf)
-
-sparql_ep_url = 'https://laketsidx-staging.artic.edu/blazegraph/namespace/lakeidx/'
+app.config.update(flask_conf)
 
 role_uri_pfx = 'http://definitions.artic.edu/ontology/1.0/type/'
 
@@ -59,7 +55,8 @@ def batch_download():
     uids = request.form.get('uids', '').split(',')
     original_filename = request.form.get('original_filename', False)
 
-    ziproot = '{}-{}'.format(ZIPROOT_PFX, datetime.now().isoformat())
+    ziproot = '{}-{}'.format(
+            app_conf['ziproot_pfx'], datetime.now().isoformat())
 
     response = Response(
             generate(uids, ziproot, original_filename), mimetype='application/zip')
@@ -110,7 +107,7 @@ def retrieve_contents(asset_uid, role_uris=[]):
     app.logger.info('Asset UID: {}'.format(asset_uid))
     qry = qry_tpl.format(uid=asset_uid)
     rsp = requests.post(
-        sparql_ep_url,
+        app_conf['sparql_ep_url'],
         data={'query': qry},
         headers={'Accept': 'application/json'}
     )
@@ -128,5 +125,6 @@ def retrieve_contents(asset_uid, role_uris=[]):
         yield {
             'orig_fname': doc['fname']['value'],
             'fstype': fset_pfx[path.basename(doc['fstype']['value'])],
-            'iterable': file_rsp.iter_content(chunk_size=CHUNK_SIZE ),
+            'iterable': file_rsp.iter_content(
+                chunk_size=app_conf['chunk_size'] ),
         }

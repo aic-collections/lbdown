@@ -1,0 +1,18 @@
+# SPARQL endpoint to query data.
+sparql_ep_url: '<set me>'
+
+sparql_ep_uid: ''
+sparql_ep_pwd: ''
+
+# These credentials are applied to the requests to the resource URIs provided
+# by, or crafted from, the SPARQL endpoint. These are currently Fedora URIs but
+# they can change to LAKEshore URIs.
+binary_src_uid: ''
+binary_src_pwd: ''
+
+# Beginning of the ZIP archive root name. It is suffixed with a timestamp.
+ziproot_pfx: 'lake_batch_download'
+
+# Bytes streamed at a time.
+chunk_size: 4096
+
