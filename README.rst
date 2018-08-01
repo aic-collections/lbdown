@@ -31,18 +31,39 @@ module from the Python standard library is the most convenient tool.
     cd src
     # Install dependencies.
     pip install -r requirements.txt
+    # Make the run script executable.
+    chmod +x run.sh
 
-    # Set up application.
-    cp -r etc.example /tmp/my_config
-    #### Edit application.yml config file ####
+-------------
+Configuration
+-------------
 
-    export LBDOWN_CONFIG_DIR=/tmp/my_config
-    export FLASK_APP=server.py
+The source code comes with a sample configuration which is unusable without
+modifications. In order to prevent overwriting your configuration when pulling
+updates to the git repo, you must copy the sample configuration directory in a
+safe place, e.g.::
 
-    # Run the server
-    flask run
+    cp -r etc.example /usr/local/lake/lbdown/etc
 
-The server will run on port 5000.
+You must provide an endpoint URL for the triplestore index, and if the Fedora
+endpoint from which files are downloaded require authentication, credentials
+too must be provided.
+
+After configuring the application you need to export an environment variable
+pointing to it::
+
+    export LBDOWN_CONFIG_DIR=/usr/local/lake/lbdown/etc
+
+-------
+Startup
+-------
+
+To start the server, execute `run.sh`::
+
+    ./run.sh
+
+The server will run by default on port 8000 with 4 threads. This is a WSGI,
+production-ready server.
 
 -----
 Usage
